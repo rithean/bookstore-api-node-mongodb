@@ -6,9 +6,8 @@ const {
   verifyRefreshToken,
 } = require("../utils/jwt");
 
-// Register User
 const register = async (userData) => {
-  const { name, email, password } = userData;
+  const { name, email, password, role = "user" } = userData;
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
@@ -16,7 +15,7 @@ const register = async (userData) => {
       name,
       email,
       password: hashedPassword,
-      role: "user",
+      role,
       isActive: true,
     });
 
@@ -39,7 +38,6 @@ const register = async (userData) => {
   }
 };
 
-// Login User
 const login = async (email, password) => {
   try {
     const user = await User.findOne({ email });
@@ -68,7 +66,6 @@ const login = async (email, password) => {
   }
 };
 
-// Refresh Access Token
 const refreshAccessToken = async (refreshToken) => {
   try {
     const decoded = verifyRefreshToken(refreshToken);
