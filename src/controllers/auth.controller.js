@@ -5,13 +5,17 @@ const {
   refreshAccessToken,
 } = require("../services/auth.service");
 const { successResponse, errorResponse } = require("../utils/response");
-const { registerSchema } = require("../validations/auth.validation");
+const {
+  registerSchema,
+  loginSchema,
+  refreshTokenSchema,
+} = require("../validations/auth.validation");
 
 const registerController = async (req, res) => {
   try {
     const { error } = registerSchema.validate(req.body);
 
-    if (err) {
+    if (error) {
       return errorResponse(
         res,
         HttpStatus.BAD_REQUEST,
@@ -19,9 +23,9 @@ const registerController = async (req, res) => {
       );
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
-    await register({ name, email, password });
+    await register({ name, email, password, role });
     return successResponse(
       res,
       HttpStatus.CREATED,
@@ -40,6 +44,15 @@ const registerController = async (req, res) => {
 
 const loginController = async (req, res) => {
   try {
+    const { error } = loginSchema.validate(req.body);
+
+    if (error) {
+      return errorResponse(
+        res,
+        HttpStatus.BAD_REQUEST,
+        error.details.map((e) => e.message).join(",")
+      );
+    }
     const { email, password } = req.body;
 
     const { accessToken, refreshToken, user } = await login(email, password);
@@ -67,6 +80,16 @@ const loginController = async (req, res) => {
 
 const refreshController = async (req, res) => {
   try {
+    const { error } = refreshTokenSchema.validate(req.body);
+
+    if (error) {
+      return errorResponse(
+        res,
+        HttpStatus.BAD_REQUEST,
+        error.details.map((e) => e.message).join(",")
+      );
+    }
+
     const { refreshToken } = req.body;
     const { accessToken } = await refreshAccessToken(refreshToken);
 

@@ -4,17 +4,17 @@ const Genre = require("../models/Genre");
 
 const createBook = async (bookData) => {
   try {
-    const { authorId, genreId, ...rest } = bookData;
+    const { authorId, genreIds, ...rest } = bookData;
 
     const author = await Author.findById(authorId);
     if (!author) throw new Error(`Author with ID ${authorId} does not exist.`);
 
-    const genre = await Genre.findById(genreId);
-    if (!genre) throw new Error(`Genre with ID ${genreId} does not exist.`);
+    const genre = await Genre.findById(genreIds);
+    if (!genre) throw new Error(`Genre with ID ${genreIds} does not exist.`);
 
     const newBook = await Book.create({
       authorId,
-      genreId,
+      genreIds,
       ...rest,
     });
 
@@ -93,7 +93,7 @@ const getBookByGenre = async (id) => {
 
 const updateBook = async (id, updateData) => {
   try {
-    const { authorId, genreId, ...rest } = updateData;
+    const { authorId, genreIds, ...rest } = updateData;
 
     if (authorId) {
       const author = await Author.findById(authorId);
@@ -102,13 +102,13 @@ const updateBook = async (id, updateData) => {
     }
 
     if (genreId) {
-      const genre = await Genre.findById(genreId);
-      if (!genre) throw new Error(`Genre with ID ${genreId} does not exist.`);
+      const genre = await Genre.findById(genreIds);
+      if (!genre) throw new Error(`Genre with ID ${genreIds} does not exist.`);
     }
 
     const updatedBook = await Book.findByIdAndUpdate(
       id,
-      { authorId, genreId, ...rest },
+      { authorId, genreIds, ...rest },
       { new: true, runValidators: true }
     )
       .populate("authorId")
