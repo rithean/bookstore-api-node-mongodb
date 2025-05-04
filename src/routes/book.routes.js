@@ -5,7 +5,7 @@ const {
   getAllBooksController,
   getBookByIdController,
   updateBookController,
-  deletBookController,
+  deleteBookController,
 } = require("../controllers/book.controller");
 const { authenticate, authorize } = require("../middlewares/auth.middleware");
 
@@ -18,6 +18,6 @@ router.get("/:id", authenticate, getBookByIdController);
 
 router.put("/:id", authenticate, authorize(["admin"]), updateBookController);
 
-router.delete("/:id", authenticate, authorize(["admin"]), deletBookController);
+router.delete("/:id", authenticate, authorize(["admin"]), deleteBookController);
 
 module.exports = router;
